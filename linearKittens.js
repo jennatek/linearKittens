@@ -7,14 +7,17 @@ document.body.appendChild(document.createElement('script')).src='https://cdn.raw
 // Number of ticks every second
 ticksPerSecond = gamePage.rate; //5
 
+//my random stuff
+var holdbuild =[];
+var oldbuild =[];
 /* Maximum fraction of resource cap that we can score and use to build.  Useful
 because it helps prevent loss from steamworks automation. This is subdivided into
 automationResourceCap, which applies to wood, minerals, and iron, scienceResourceCap,
 which applies to science and faith, and resourceCap, which applies to all other
 resources. */
 automationResourceCap = 0.9;
-scienceResourceCap = 0.999;
-resourceCap = 0.99;
+scienceResourceCap = 0.8;
+resourceCap = 0.8;
 
 // Threshold for ignoring things in the linear programs
 tradeThreshold = 1e-2;
@@ -1057,7 +1060,11 @@ function linearProgram (time) {
     weight*= 1 + randomBuildingWeightScaling* Math.random();
     buttonWeights.push(weight);
   }
-
+  //Clearing the console saves memory
+  console.clear();
+  console.log(holdbuild);
+  oldbuild = holdbuild;
+  holdbuild=[];
   //List the buttons that we're considering
   console.log("  Considering building:", getValues(getValues(buildableButtonList,"model"),"name"));
   console.log(buttonCosts);
@@ -1685,6 +1692,10 @@ function executeLoop () {
       if (canBuildNow>0) {
         // try to build it.
         console.log("  Constructing",buildButton.model.name);
+        holdbuild = buildButton.model.name;
+        if (holdbuild == oldbuild) {
+          holdbuild == [];
+        }
         buildButton.onClick(genericEvent);
         event = genericEvent; // this is an ugly hack to compensate for the definition of onClick for the Research Vessel program
         if (constructionResetsPlanning) {
